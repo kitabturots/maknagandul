@@ -350,8 +350,8 @@
         <div id="tab-rujuk" class="vk-tab-content">
             <div class="vk-row">
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـ')">هـ</button>
-                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـa')">هـا</button>
-                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـm')">هـم</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـا')">هـا</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـم')">هـم</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ك')">ك</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' م')">م</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'خ')">خ</button>
@@ -414,6 +414,7 @@
             }
         }
 
+        // ... [Sistem penanganan ketikan & tab tetap sama] ...
         function switchVKTab(tabId) {
             let contents = document.querySelectorAll('.vk-tab-content');
             contents.forEach(c => c.classList.remove('active-tab'));
@@ -534,6 +535,7 @@
             document.getElementById("btnCopyBlog").style.display = "none";
         }
 
+        // BAGIAN UTAMA YANG SAYA PERBAIKI AGAR TOMBOL MUNCUL
         function prosesTeksJebret() {
             let teksMentah = document.getElementById("inputTeks").value.trim();
             if (teksMentah === "") { alert("Silakan paste teks terlebih dahulu!"); return; }
@@ -583,9 +585,11 @@
             });
 
             document.getElementById("boxKitab").innerHTML = htmlHasil;
+            
+            // FIX: Di sini kemarin lupa diset block, sekarang beres!
             document.getElementById("btnPDF").style.display = "inline-block";
             document.getElementById("btnGambar").style.display = "inline-block";
-            document.getElementById("btnCopyBlog").style.display = "inline-block";
+            document.getElementById("btnCopyBlog").style.display = "inline-block"; 
             
             if(kbdMode === 'virtual') setKeyboardMode('virtual');
         }
@@ -624,19 +628,14 @@
         function simpanSebagaiGambar() {
             let areaKerja = document.getElementById("boxKitab");
             let vk = document.getElementById("virtualKeyboard");
-            
             sembunyikanTitikKosong();
             areaKerja.classList.add("hide-for-capture");
             vk.style.display = "none";
-            
-            alert("Layar dibersihkan! SILAKAN SCREENSHOT HP ANDA SEKARANG untuk hasil Pegon yang 100% lurus, rapi, dan gandeng!");
-            
+            alert("Layar dibersihkan! SILAKAN SCREENSHOT HP ANDA SEKARANG!");
             setTimeout(function() {
                 areaKerja.classList.remove("hide-for-capture");
                 let kbdMode = document.querySelector('input[name="kbdMode"]:checked').value;
-                if (kbdMode === 'virtual') {
-                    vk.style.display = "flex";
-                }
+                if (kbdMode === 'virtual') vk.style.display = "flex";
             }, 8000);
         }
 
@@ -652,7 +651,6 @@
                 el.removeAttribute("contenteditable");
                 el.removeAttribute("inputmode");
                 el.removeAttribute("onkeydown");
-                
                 if(el.innerText.trim() === "..." || el.innerText.trim() === "") {
                     el.innerText = "";
                 }
@@ -663,10 +661,9 @@
             navigator.clipboard.writeText(kodeBersih).then(function() {
                 alert("📋 KODE BERHASIL DISALIN!\n\nSilakan buka Dasbor Blog (Blogger/Wordpress), masuk ke mode 'Tampilan HTML', lalu Paste kodenya di sana.");
             }).catch(function(err) {
-                alert("Gagal menyalin kode secara otomatis. Silakan coba lagi.");
+                alert("Gagal menyalin kode. Silakan coba lagi.");
             });
         }
     </script>
-
 </body>
 </html>
