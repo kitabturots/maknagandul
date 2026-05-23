@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aplikasi Makna Gandul Modern & Responsive</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -80,11 +81,11 @@
         #btnPDF { background-color: #dc3545; display: none; }
         #btnGambar { background-color: #17a2b8; display: none; }
 
-        /* AREA WORKSPACE UTAMA PARAGRAF (PERBAIKAN CSS ADA DI SINI) */
+        /* AREA WORKSPACE UTAMA PARAGRAF */
         .workspace-paragraph {
             border: 1px solid #ced4da; padding: 20px 15px; min-height: 250px;
             border-radius: 8px; background-color: #ffffff;
-            line-height: 3.5; /* Jarak baris dirapatkan jadi 3.5 */
+            line-height: 3.5; 
             display: block; overflow: hidden; text-align: right; 
         }
 
@@ -116,7 +117,7 @@
         
         .tab-space { display: inline-block; width: 30px; height: 10px; }
 
-        /* KONFIGURASI TAMPILAN BAHASA & PEGON (PERBAIKAN KERAPATAN KATA ADA DI SINI) */
+        /* KONFIGURASI TAMPILAN BAHASA & PEGON */
         .mode-arab-workspace { direction: rtl; }
         
         .mode-arab-workspace .gandul-box {
@@ -627,20 +628,24 @@
             sembunyikanTitikKosong();
             areaKerja.classList.add("hide-for-capture");
 
-            html2canvas(areaKerja, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
-                let linkGambar = document.createElement('a');
-                linkGambar.download = 'makna-gandul-' + Date.now() + '.png';
-                linkGambar.href = canvas.toDataURL('image/png');
-                linkGambar.click();
-                areaKerja.classList.remove("hide-for-capture");
-                btn.innerHTML = teksAsli;
-                btn.disabled = false;
-            }).catch(err => {
-                areaKerja.classList.remove("hide-for-capture");
-                alert("Gagal: " + err);
-                btn.innerHTML = teksAsli;
-                btn.disabled = false;
-            });
+            // Menggunakan dom-to-image yang lebih pintar baca Pegon
+            domtoimage.toPng(areaKerja, { bgcolor: '#ffffff' })
+                .then(function (dataUrl) {
+                    let linkGambar = document.createElement('a');
+                    linkGambar.download = 'makna-gandul-' + Date.now() + '.png';
+                    linkGambar.href = dataUrl;
+                    linkGambar.click();
+                    
+                    areaKerja.classList.remove("hide-for-capture");
+                    btn.innerHTML = teksAsli;
+                    btn.disabled = false;
+                })
+                .catch(function (error) {
+                    areaKerja.classList.remove("hide-for-capture");
+                    alert("Gagal: " + error);
+                    btn.innerHTML = teksAsli;
+                    btn.disabled = false;
+                });
         }
     </script>
 
