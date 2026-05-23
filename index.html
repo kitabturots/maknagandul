@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aplikasi Makna Gandul Modern & Responsive</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
-    
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -223,7 +221,8 @@
             .titik-kosong { color: transparent !important; }
         }
 
-        .hide-for-capture .row-align-toolbar, .hide-for-capture .vk-container { display: none !important; }
+        /* UTILITY FOR CLEAN SCREENSHOT CAPTURE */
+        .hide-for-capture .row-align-toolbar { display: none !important; }
         .hide-for-capture .gandul-row { border-top: none !important; padding-top: 0 !important; }
         .hide-for-capture .nahwu-atas { border-bottom: none !important; }
         .hide-for-capture .makna-bawah { border-top: none !important; }
@@ -254,7 +253,7 @@
                 <button id="btnJebret" class="btn-main" onclick="prosesTeksJebret()">Jebret! Plot Per Kata</button>
                 <button id="btnToggleVK" class="btn-main" onclick="toggleVirtualKeyboard()">⌨️ Buka Keyboard Pegon</button>
                 <button id="btnPDF" class="btn-main" onclick="cetakPDF()">📄 Simpan PDF</button>
-                <button id="btnGambar" class="btn-main" onclick="simpanSebagaiGambar()">🖼️ Simpan Gambar</button>
+                <button id="btnGambar" class="btn-main" onclick="simpanSebagaiGambar()">🖼️ Siapkan Layar Gambar</button>
             </div>
         </div>
 
@@ -357,8 +356,8 @@
             </div>
             <div class="vk-row">
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ع')">ع</button>
-                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'عـب')">عـb</button>
-                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'عـم')">عـm</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'عـb')">عـb</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'عـm')">عـm</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ف')">ف</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ج')">ج</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ش')">ش</button>
@@ -620,32 +619,24 @@
 
         function simpanSebagaiGambar() {
             let areaKerja = document.getElementById("boxKitab");
-            let btn = document.getElementById("btnGambar");
-            let teksAsli = btn.innerHTML;
-            btn.innerHTML = "⌛ Menyimpan...";
-            btn.disabled = true;
-
+            let vk = document.getElementById("virtualKeyboard");
+            
+            // 1. Sembunyikan semua titik kosong dan toolbar biar bersih
             sembunyikanTitikKosong();
             areaKerja.classList.add("hide-for-capture");
-
-            // Menggunakan dom-to-image yang lebih pintar baca Pegon
-            domtoimage.toPng(areaKerja, { bgcolor: '#ffffff' })
-                .then(function (dataUrl) {
-                    let linkGambar = document.createElement('a');
-                    linkGambar.download = 'makna-gandul-' + Date.now() + '.png';
-                    linkGambar.href = dataUrl;
-                    linkGambar.click();
-                    
-                    areaKerja.classList.remove("hide-for-capture");
-                    btn.innerHTML = teksAsli;
-                    btn.disabled = false;
-                })
-                .catch(function (error) {
-                    areaKerja.classList.remove("hide-for-capture");
-                    alert("Gagal: " + error);
-                    btn.innerHTML = teksAsli;
-                    btn.disabled = false;
-                });
+            vk.style.display = "none";
+            
+            // 2. Beri notifikasi ke pengguna untuk screenshot manual
+            alert("Layar dibersihkan! SILAKAN SCREENSHOT HP ANDA SEKARANG untuk hasil Pegon yang 100% lurus, rapi, dan gandeng!");
+            
+            // 3. Kembalikan toolbar & keyboard setelah 8 detik (memberi waktu bernafas untuk screenshot)
+            setTimeout(function() {
+                areaKerja.classList.remove("hide-for-capture");
+                let kbdMode = document.querySelector('input[name="kbdMode"]:checked').value;
+                if (kbdMode === 'virtual') {
+                    vk.style.display = "flex";
+                }
+            }, 8000);
         }
     </script>
 
