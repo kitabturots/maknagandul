@@ -210,7 +210,11 @@
             button.btn-main { padding: 8px 10px; font-size: 13px; min-width: 120px; }
         }
 
-        /* PRINT SETTINGS */
+        /* =========================================================================
+           PRINT SETTINGS / PENGATURAN PDF:
+           Bagian ini HANYA aktif saat tombol 'Simpan PDF' ditekan. 
+           Tujuannya untuk merapatkan baris agar menghemat kertas!
+           ========================================================================= */
         @media print {
             body { background-color: #ffffff; padding: 10mm; padding-bottom: 0; }
             .container { box-shadow: none; padding: 0; max-width: 100%; }
@@ -221,6 +225,18 @@
             .row-align-toolbar { display: none !important; }
             .gandul-row { border-top: none !important; padding-top: 0 !important; }
             .titik-kosong { color: transparent !important; }
+
+            /* MANTRA KHUSUS UNTUK MEMADATKAN JARAK BARIS SAAT DICETAK */
+            .workspace-paragraph {
+                line-height: 1.5 !important; /* Jarak dibuat merapat setara Single Spacing */
+            }
+            .gandul-row { 
+                margin-bottom: 5px !important; 
+                padding-top: 15px !important; 
+            }
+            .mode-arab-workspace .gandul-box {
+                margin-bottom: 30px !important; /* Ruang sedikit agar ekor makna bawah tidak bertabrakan dengan baris bawahnya */
+            }
         }
 
         .hide-for-capture .row-align-toolbar, .hide-for-capture .vk-container { display: none !important; }
