@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aplikasi Makna Gandul Modern & Responsive</title>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -34,514 +36,618 @@
             border-radius: 8px;
         }
 
-        textarea {
-            width: 100%;
-            height: 80px;
-            font-size: 16px;
+        .mode-selector, .kbd-mode-selector { 
+            margin-bottom: 12px; 
+            font-weight: bold; 
+            font-size: 14px;
+        }
+        .mode-selector label, .kbd-mode-selector label {
+            display: inline-block;
+            margin-right: 15px;
+            margin-top: 5px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        .mode-selector input, .kbd-mode-selector input { margin-right: 5px; cursor: pointer; }
+
+        .kbd-mode-selector {
+            background: #d4edda;
             padding: 10px;
-            border: 1px solid #ccc;
             border-radius: 6px;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        textarea {
+            width: 100%; height: 90px; font-size: 16px; padding: 10px;
+            border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
             resize: vertical;
         }
 
-        .btn-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
+        .mode-arab-input { direction: rtl; font-family: 'Traditional Arabic', serif; font-size: 22px; }
+        .mode-inggris-input { direction: ltr; font-family: 'Arial', sans-serif; font-size: 16px; }
+
+        .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+        button.btn-main {
+            padding: 10px 15px; font-size: 14px; font-weight: bold;
+            color: white; border: none; border-radius: 4px; cursor: pointer; flex: 1; min-width: 140px;
         }
 
-        button {
-            flex: 1;
-            min-width: 150px;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        #btnJebret { background-color: #28a745; }
+        #btnJebret:hover { background-color: #218838; }
+        #btnToggleVK { background-color: #6f42c1; }
+        #btnToggleVK:hover { background-color: #59339d; }
+        #btnPDF { background-color: #dc3545; display: none; }
+        #btnGambar { background-color: #17a2b8; display: none; }
 
-        .btn-plot { background-color: #28a745; color: white; }
-        .btn-plot:hover { background-color: #218838; }
-        .btn-pdf { background-color: #dc3545; color: white; }
-        .btn-pdf:hover { background-color: #c82333; }
-        .btn-copy { background-color: #007bff; color: white; }
-        .btn-copy:hover { background-color: #0069d9; }
-
-        /* AREA KERJA EDITOR */
+        /* AREA WORKSPACE UTAMA PARAGRAF */
         .workspace-paragraph {
-            border: 1px solid #ced4da; 
-            padding: 20px 15px; 
-            min-height: 250px;
-            border-radius: 8px; 
-            background-color: #ffffff;
-            line-height: 2.8; /* Nyaman untuk editing di layar */
-            display: block; 
-            overflow: hidden; 
-            text-align: right; 
+            border: 1px solid #ced4da; padding: 20px 15px; min-height: 250px;
+            border-radius: 8px; background-color: #ffffff;
+            line-height: 3.5; 
+            display: block; overflow: hidden; text-align: right; 
         }
 
         .gandul-row {
-            display: block;
-            margin-bottom: 20px;
-            width: 100%;
-            clear: both;
-            position: relative;
-            padding-top: 15px;
-            border-top: 1px dotted #e9ecef;
+            display: block; margin-bottom: 12px; width: 100%; clear: both;
+            position: relative; padding-top: 36px; border-top: 1px dotted #e9ecef;
         }
+        .gandul-row:first-child { border-top: none; padding-top: 25px; }
 
-        .gandul-row:first-child {
-            border-top: none;
-            padding-top: 0;
-        }
-
-        .gandul-words-container {
-            display: block;
-            width: 100%;
-            text-align: right;
-            direction: rtl;
-        }
-
-        .gandul-box {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            margin-left: 12px;
-            margin-right: 4px;
-            margin-bottom: 25px; /* Menahan agar tidak tabrakan */
-            vertical-align: bottom;
-            line-height: 1;
-            width: auto;
-            position: relative;
-        }
-
-        .gandul-box span {
-            margin: 0;
-            padding: 0;
-            display: block;
-        }
-
-        .nahwu-atas {
-            text-align: center;
-            font-size: 13px;
-            color: #b30000;
-            font-weight: bold;
-            min-width: 20px;
-            border-bottom: 1px dashed #ffcccc;
-            margin-bottom: 2px;
-            min-height: 15px;
-        }
-
-        .lafadz-tengah {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #000000;
-            font-family: 'Traditional Arabic', serif;
-            min-width: 30px;
-            min-height: 28px;
-        }
-
-        .makna-bawah {
-            text-align: right;
-            font-size: 16px;
-            color: #555555;
-            font-family: 'Traditional Arabic', serif;
-            white-space: nowrap;
-            min-width: 30px;
-            border-top: 1px dashed #e0e0e0;
-            margin-top: 4px;
-            display: inline-block;
-            transform: rotate(-35deg);
-            transform-origin: top right;
-            padding-right: 2px;
-            min-height: 20px;
-            direction: rtl;
-        }
-
-        .tab-space {
-            display: inline-block;
-            width: 25px;
-            height: 10px;
-        }
-
-        .rujuk-style {
-            color: #b30000;
-            font-weight: bold;
-            text-decoration: underline double;
-            text-underline-offset: 2px;
-        }
-
-        .titik-kosong {
-            color: #ccc;
-        }
-
-        /* TOOLBAR ALIGNMENT PER BARIS */
         .row-align-toolbar {
+            position: absolute; top: 0; display: flex; gap: 4px; background: #f1f3f5;
+            padding: 4px; border-radius: 4px; border: 1px solid #dee2e6; user-select: none; z-index: 10;
+            max-width: 100%; overflow-x: auto; white-space: nowrap;
+        }
+        .mode-arab-workspace .row-align-toolbar { right: 0; }
+        .mode-inggris-workspace .row-align-toolbar { left: 0; }
+
+        .btn-row-align {
+            background: white; border: 1px solid #ced4da; color: #495057;
+            padding: 3px 6px; font-size: 11px; cursor: pointer; border-radius: 3px; margin: 0;
+            display: inline-block;
+        }
+        .btn-row-align.active { background: #007bff; color: white; border-color: #007bff; font-weight: bold; }
+        .btn-tab-indent { background-color: #6f42c1; color: white; border-color: #6f42c1; }
+        .btn-format-text { background-color: #e67e22; color: white; border-color: #e67e22; }
+        .btn-undo-text { background-color: #6c757d; color: white; border-color: #6c757d; }
+
+        .gandul-words-container { display: block; width: 100%; }
+        
+        .tab-space { display: inline-block; width: 30px; height: 10px; }
+
+        /* KONFIGURASI TAMPILAN BAHASA & PEGON */
+        .mode-arab-workspace { direction: rtl; }
+        
+        .mode-arab-workspace .gandul-box {
             display: inline-flex;
-            gap: 2px;
-            background: #f1f3f4;
-            padding: 2px;
-            border-radius: 4px;
-            border: 1px solid #dadce0;
-            margin-right: 10px;
-            direction: ltr;
-            vertical-align: middle;
-        }
-        .row-align-toolbar button {
-            min-width: unset;
-            flex: unset;
-            padding: 3px 6px;
-            font-size: 11px;
-            background: white;
-            color: #333;
-            border: 1px solid #ccc;
-        }
-        .row-align-toolbar button.active {
-            background: #007bff;
-            color: white;
-            border-color: #0069d9;
-        }
-
-        /* KEYBOARD VIRTUAL */
-        .virtual-keyboard {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #d1d5db;
-            padding: 10px;
-            box-shadow: 0 -3px 15px rgba(0,0,0,0.15);
-            display: flex;
             flex-direction: column;
-            gap: 5px;
-            z-index: 9999;
-            direction: ltr;
+            align-items: center; 
+            justify-content: flex-end; 
+            margin-left: 20px; 
+            margin-bottom: 25px; 
+            vertical-align: bottom;
+            line-height: 1; 
         }
 
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
+        .mode-arab-workspace .nahwu-atas { 
+            text-align: center; font-size: 13px; color: #b30000; font-weight: bold; min-width: 25px; 
+            border-bottom: 1px dashed #ffcccc; margin-bottom: 4px; align-self: flex-start; min-height: 16px;
+        }
+        .mode-arab-workspace .lafadz-tengah { 
+            text-align: center; font-size: 28px; font-weight: bold; color: #000000; 
+            font-family: 'Traditional Arabic', serif; min-width: 35px; min-height: 32px;
+        }
+        .mode-arab-workspace .makna-bawah { 
+            text-align: right; font-size: 18px; color: #555555; 
+            font-family: 'Traditional Arabic', serif; white-space: nowrap; min-width: 35px; 
+            border-top: 1px dashed #e0e0e0; margin-top: 5px; align-self: flex-start;
+            display: inline-block; transform: rotate(-35deg); transform-origin: top right; padding-right: 4px;
+            min-height: 22px; direction: rtl; 
         }
 
-        .key {
-            background: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 0;
-            flex: 1;
-            max-width: 45px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: unset;
+        .mode-inggris-workspace { direction: ltr; }
+        .mode-inggris-workspace .gandul-box { margin-right: 12px; display: inline-flex; flex-direction: column; align-items: flex-start; margin-bottom: 5px; vertical-align: bottom; line-height: 1.1; }
+        .mode-inggris-workspace .nahwu-atas { text-align: left; font-size: 11px; color: #0056b3; font-weight: bold; min-width: 25px; border-bottom: 1px dashed #cce5ff; margin-bottom: 3px; align-self: flex-start; min-height: 14px;}
+        .mode-inggris-workspace .lafadz-tengah { text-align: left; font-size: 20px; font-weight: bold; color: #000000; font-family: 'Arial', sans-serif; min-width: 35px; min-height: 24px;}
+        .mode-inggris-workspace .makna-bawah { text-align: left; font-size: 13px; color: #555555; white-space: nowrap; min-width: 35px; border-top: 1px dashed #e0e0e0; margin-top: 5px; align-self: flex-start; min-height: 16px;}
+
+        sup, sub { line-height: 0; }
+        .rujuk-style { color: #b30000; font-weight: bold; text-decoration: underline double; text-underline-offset: 3px; }
+
+        /* KEYBOARD VIRTUAL PEGON */
+        .vk-container {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #d1d5db; padding: 8px 4px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
+            z-index: 9999; display: none; flex-direction: column; gap: 5px;
+            align-items: center; user-select: none; direction: ltr;
         }
-        .key:active { background: #e5e7eb; }
+        .vk-header {
+            width: 100%; max-width: 750px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #b91c1c20; padding-bottom: 6px;
+        }
+        .vk-tabs { display: flex; gap: 3px; }
+        .vk-tab-btn {
+            background: #e5e7eb; border: 1px solid #9ca3af; border-radius: 4px;
+            padding: 6px 10px; font-size: 12px; font-weight: bold; cursor: pointer; color: #374151;
+        }
+        .vk-tab-btn.active { background: #6f42c1; color: white; border-color: #59339d; }
+        .vk-close {
+            background: #dc3545; color: white; border: none; border-radius: 4px;
+            padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: bold;
+        }
+        
+        .vk-tab-content { display: none; width: 100%; max-width: 750px; flex-direction: column; gap: 5px; }
+        .vk-tab-content.active-tab { display: flex; }
 
-        .key.wide { max-width: 80px; font-size: 14px; background: #9ca3af; color: white; }
-        .key.space { max-width: 300px; }
+        .vk-row { display: flex; gap: 3px; justify-content: center; width: 100%; }
+        
+        .vk-btn {
+            background: #ffffff; border: none; border-radius: 5px;
+            box-shadow: 0 1.5px 0 #9ca3af; color: #111; font-size: 20px;
+            font-family: 'Traditional Arabic', serif; flex: 1; padding: 8px 0;
+            cursor: pointer; text-align: center; display: flex;
+            align-items: center; justify-content: center; min-width: 22px;
+        }
+        .vk-btn:active { background: #e5e7eb; transform: translateY(1.5px); box-shadow: 0 0 0 #9ca3af; }
+        
+        .vk-btn.wide { flex: 1.5; font-size: 14px; background: #9ca3af; color: white; box-shadow: 0 1.5px 0 #6b7280;}
+        .vk-btn.space { flex: 4; font-size: 14px; }
+        .vk-btn.pepet { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
+        .vk-btn.rujuk-key { color: #b30000; text-decoration: underline double; text-underline-offset: 3px; font-weight: bold; }
 
-        /* SETINGAN PRINT / SIMPAN PDF (ANTI-RENGGANG / SINGLE SPACING) */
+        /* RESPONSIVE SMARTPHONE (HP) */
+        @media (max-width: 600px) {
+            body { padding: 8px; padding-bottom: 240px; }
+            .container { padding: 12px; border-radius: 8px; }
+            h2 { font-size: 18px; }
+            .vk-btn { padding: 10px 0; font-size: 18px; }
+            .vk-tab-btn { padding: 5px 6px; font-size: 11px; }
+            .mode-arab-workspace .lafadz-tengah { font-size: 24px; }
+            .mode-arab-workspace .makna-bawah { font-size: 16px; }
+            button.btn-main { padding: 8px 10px; font-size: 13px; min-width: 120px; }
+        }
+
+        /* PRINT SETTINGS */
         @media print {
-            body { background: white; padding: 0; margin: 0; }
+            body { background-color: #ffffff; padding: 10mm; padding-bottom: 0; }
             .container { box-shadow: none; padding: 0; max-width: 100%; }
-            .input-panel, .virtual-keyboard, .row-align-toolbar, .hide-for-capture { display: none !important; }
-            .workspace-paragraph { border: none; padding: 0; min-height: unset; background: transparent; }
-            
-            /* Kunci Utama Single Spacing Pas Jadi PDF */
-            .workspace-paragraph {
-                line-height: 1.3 !important; 
-            }
-            .gandul-row {
-                margin-bottom: 5px !important;
-                padding-top: 10px !important;
-            }
-            .gandul-box {
-                margin-bottom: 26px !important;
-            }
+            .input-panel, h2, .vk-container { display: none !important; } 
+            .workspace-paragraph { border: none; padding: 0; }
+            .nahwu-atas { border-bottom: none !important; }
+            .makna-bawah { border-top: none !important; }
+            .row-align-toolbar { display: none !important; }
+            .gandul-row { border-top: none !important; padding-top: 0 !important; }
             .titik-kosong { color: transparent !important; }
         }
+
+        .hide-for-capture .row-align-toolbar, .hide-for-capture .vk-container { display: none !important; }
+        .hide-for-capture .gandul-row { border-top: none !important; padding-top: 0 !important; }
+        .hide-for-capture .nahwu-atas { border-bottom: none !important; }
+        .hide-for-capture .makna-bawah { border-top: none !important; }
+        .hide-for-capture .titik-kosong { color: transparent !important; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Editor Makna Gandul Nusantara V2 (Single Spacing PDF)</h2>
+        <h2>Editor Makna Gandul Nusantara</h2>
         
-        <div class="input-panel hide-for-capture">
-            <label style="font-weight: bold; display:block; margin-bottom:5px;">1. Masukkan Teks Arab Asli:</label>
-            <textarea id="inputArab" placeholder="Contoh: (فَصْلٌ) فِي بَيَانِ تَمَسُّكِ أَهْلِ جَاوَى بِمَذْهَبِ..."></textarea>
-            
-            <div style="margin-top:10px; font-size:14px;">
-                <label style="font-weight: bold; margin-right: 15px;">Mode Input:</label>
-                <input type="radio" id="kbdFisik" name="kbdMode" value="physical" checked onchange="toggleKbd()"> 
-                <label style="margin-right:15px;" for="kbdFisik">Keyboard Fisik / Laptop</label>
-                <input type="radio" id="kbdVirtual" name="kbdMode" value="virtual" onchange="toggleKbd()"> 
-                <label for="kbdVirtual">Keyboard Virtual HP</label>
+        <div class="input-panel">
+            <div class="mode-selector">
+                Mode Teks Utama:
+                <label><input type="radio" id="radioArab" name="bahasa" value="arab" checked onclick="gantiModeBahasa('arab')"> Arab / Pegon</label>
+                <label><input type="radio" id="radioInggris" name="bahasa" value="inggris" onclick="gantiModeBahasa('inggris')"> Inggris / Latin</label>
             </div>
 
-            <div class="btn-container">
-                <button class="btn-plot" onclick="plotTeks()">Jebret! Plot Per Kata ⚡</button>
-                <button class="btn-pdf" onclick="cetakPDF()">📄 Simpan PDF</button>
-                <button class="btn-copy" onclick="salinKodeBlog()">📋 Salin Kode Blog (HTML)</button>
+            <div class="kbd-mode-selector" id="panelKbdMode">
+                Pilihan Papan Ketik (Keyboard Input): <br>
+                <label><input type="radio" name="kbdMode" value="native" checked onclick="setKeyboardMode('native')"> 📱 Gunakan Keyboard HP Asli (Gboard / iOS)</label> <br>
+                <label><input type="radio" name="kbdMode" value="virtual" onclick="setKeyboardMode('virtual')"> ⌨️ Gunakan Keyboard Pegon Web (Anti Bentrok Layar)</label>
+            </div>
+
+            <textarea id="inputTeks" class="mode-arab-input" placeholder="Paste beberapa baris teks kitab di sini..." oninput="konversiAngkaInput(this)"></textarea>
+            
+            <div class="action-buttons">
+                <button id="btnJebret" class="btn-main" onclick="prosesTeksJebret()">Jebret! Plot Per Kata</button>
+                <button id="btnToggleVK" class="btn-main" onclick="toggleVirtualKeyboard()">⌨️ Buka Keyboard Pegon</button>
+                <button id="btnPDF" class="btn-main" onclick="cetakPDF()">📄 Simpan PDF</button>
+                <button id="btnGambar" class="btn-main" onclick="simpanSebagaiGambar()">🖼️ Simpan Gambar</button>
             </div>
         </div>
 
-        <label class="hide-for-capture" style="font-weight: bold; display:block; margin-bottom:5px;">2. Workspace Pengisian Makna Gandul:</label>
-        
-        <div id="boxKitab" class="workspace-paragraph">
-            </div>
+        <div id="boxKitab" class="workspace-paragraph mode-arab-workspace">
+            <span style="color:#aaa; font-family:sans-serif; font-size:15px;">
+                Hasil plot kata otomatis akan muncul di sini...
+            </span>
+        </div>
     </div>
 
-    <div id="vk" class="virtual-keyboard" style="display:none;">
-        <div class="keyboard-row">
-            <button class="key" onclick="tulisKeAktif('nahwu','م')">م</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','خ')">خ</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','مط')">مط</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','هـ')">هـ</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','ن')">ن</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','أو')">أو</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','ج')">ج</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','مص')">مص</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','حا')">حا</button>
-            <button class="key" onclick="tulisKeAktif('nahwu','ع')">ع</button>
+    <div id="virtualKeyboard" class="vk-container">
+        <div class="vk-header">
+            <div class="vk-tabs">
+                <button id="btn-tab-hijaiyah" class="vk-tab-btn active" onclick="switchVKTab('tab-hijaiyah')">Hijaiyah</button>
+                <button id="btn-tab-pegon" class="vk-tab-btn" onclick="switchVKTab('tab-pegon')">Pegon & Harakat</button>
+                <button id="btn-tab-rujuk" class="vk-tab-btn" onclick="switchVKTab('tab-rujuk')">Alamat Rujuk</button>
+            </div>
+            <button class="vk-close" onclick="toggleVirtualKeyboard()">Tutup ⬇</button>
         </div>
-        <div class="keyboard-row">
-            <button class="key" onclick="tulisKeAktif('makna','إيكيلى')">إيكيلى</button>
-            <button class="key" onclick="tulisKeAktif('makna','إيغ دالم')">إيغ دالم</button>
-            <button class="key" onclick="tulisKeAktif('makna','نراغيراكى')">نراغيراكى</button>
-            <button class="key" onclick="tulisKeAktif('makna','كواندلانى')">كواندلانى</button>
-            <button class="key" onclick="tulisKeAktif('makna','أهل')">أهل</button>
-            <button class="key" onclick="tulisKeAktif('makna','جاوي')">جاوي</button>
-            <button class="key" onclick="tulisKeAktif('makna','لن')">لن</button>
-            <button class="key" onclick="tulisKeAktif('makna','مذهب')">مذهب</button>
-            <button class="key" onclick="tulisKeAktif('makna','أول')">أول</button>
+
+        <div id="tab-hijaiyah" class="vk-tab-content active-tab">
+            <div class="vk-row">
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ض')">ض</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ص')">ص</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ث')">ث</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ق')">ق</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ف')">ف</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'غ')">غ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ع')">ع</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ه')">ه</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'خ')">خ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ح')">ح</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ش')">ش</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'س')">س</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ي')">ي</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ب')">ب</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ل')">ل</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ا')">ا</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ت')">ت</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ن')">ن</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'م')">م</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ك')">ك</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ط')">ط</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ظ')">ظ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ز')">ز</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'و')">و</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ة')">ة</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ى')">ى</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ج')">ج</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'د')">د</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ر')">ر</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ذ')">ذ</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn" onmousedown="ketikVK(event, 'لا')">لا</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ؤ')">ؤ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ء')">ء</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ئ')">ئ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'أ')">أ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'إ')">إ</button>
+            </div>
         </div>
-        <div class="keyboard-row">
-            <button class="key wide" onclick="tulisKeAktif('spasi','')">TAB</button>
-            <button class="key space" onclick="tulisKeAktif('makna',' ')">SPASI</button>
-            <button class="key wide" onclick="hapusAktif()">HAPUS</button>
+
+        <div id="tab-pegon" class="vk-tab-content">
+            <div class="vk-row">
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ڠ')" title="Ngo">ڠ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ڮ')" title="Gaf">ڮ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'پ')" title="Pa">پ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'چ')" title="Ca">چ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ۑ')" title="Nya">ۑ</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn pepet" onmousedown="ketikVK(event, 'ٓ')" title="E Pepet">◌ٓ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'َ')" title="Fathah">◌َ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ِ')" title="Kasrah">◌ِ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ُ')" title="Dhammah">◌ُ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ْ')" title="Sukun">◌ْ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ّ')" title="Tasydid">◌ّ</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ً')">◌ً</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ٍ')">◌ٍ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ٌ')">◌ٌ</button>
+                <button class="vk-btn" onmousedown="ketikVK(event, 'ٰ')">◌ٰ</button>
+            </div>
+        </div>
+
+        <div id="tab-rujuk" class="vk-tab-content">
+            <div class="vk-row">
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـ')">هـ</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـا')">هـا</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـم')">هـم</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ك')">ك</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' م')">م</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'خ')">خ</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ع')">ع</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'عـب')">عـb</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'عـم')">عـm</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ف')">ف</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ج')">ج</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'ش')">ش</button>
+            </div>
+            <div class="vk-row">
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' د')">د</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ا')">ا</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ن')">ن</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ت')">ت</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' و')">و</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ي')">ي</button>
+            </div>
+        </div>
+
+        <div class="vk-row" style="margin-top: 3px;">
+            <button class="vk-btn wide" onmousedown="ketikVK(event, 'ENTER')">⏎ Line</button>
+            <button class="vk-btn space" onmousedown="ketikVK(event, 'SPACE')">Spasi</button>
+            <button class="vk-btn wide" onmousedown="ketikVK(event, 'BACKSPACE')">⌫ Hapus</button>
         </div>
     </div>
 
     <script>
-        let elemenAktif = null;
+        const mapAngkaArab = {'0':'٠','1':'١','2':'٢','3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩'};
 
-        function toggleKbd() {
-            let mode = document.querySelector('input[name="kbdMode"]:checked').value;
-            let vk = document.getElementById("vk");
-            if (mode === "virtual") {
-                vk.style.display = "flex";
-                document.body.style.paddingBottom = "280px";
-            } else {
-                vk.style.display = "none";
-                document.body.style.paddingBottom = "15px";
-            }
-        }
-
-        function plotTeks() {
-            let teks = document.getElementById("inputArab").value.trim();
-            if (!teks) { alert("Masukkan teks arab dulu, Bosku!"); return; }
-
-            let barisTeks = teks.split("\n");
-            let boxKitab = document.getElementById("boxKitab");
-            boxKitab.innerHTML = ""; 
-
-            barisTeks.forEach((baris, indexBaris) => {
-                if(baris.trim() === "") return;
-
-                let rowDiv = document.createElement("div");
-                rowDiv.className = "gandul-row";
-                rowDiv.style.textAlign = "right";
-
-                // Toolbar rata kanan kiri per baris
-                let toolbar = document.createElement("div");
-                toolbar.className = "row-align-toolbar hide-for-capture";
-                toolbar.contentEditable = "false";
-                
-                let btnRight = document.createElement("button");
-                btnRight.innerText = "Kanan";
-                btnRight.className = "active";
-                btnRight.onclick = function() {
-                    rowDiv.style.textAlign = "right";
-                    btnLeft.classList.remove("active");
-                    btnRight.classList.add("active");
-                };
-
-                let btnLeft = document.createElement("button");
-                btnLeft.innerText = "Kiri";
-                btnLeft.onclick = function() {
-                    rowDiv.style.textAlign = "left";
-                    btnRight.classList.remove("active");
-                    btnLeft.classList.add("active");
-                };
-
-                toolbar.appendChild(btnRight);
-                toolbar.appendChild(btnLeft);
-                rowDiv.appendChild(toolbar);
-
-                let wordsContainer = document.createElement("div");
-                wordsContainer.className = "gandul-words-container";
-
-                let kataKata = baris.split(" ");
-                kataKata.forEach(kata => {
-                    if(kata.trim() === "") return;
-
-                    let box = document.createElement("div");
-                    box.className = "gandul-box";
-
-                    // 1. Nahwu Atas
-                    let spanAtas = document.createElement("span");
-                    spanAtas.className = "nahwu-atas titik-kosong";
-                    spanAtas.contentEditable = "true";
-                    spanAtas.innerText = "...";
-                    spanAtas.onfocus = function() { elemenAktif = this; };
-                    spanAtas.oninput = function() { checkTitikKosong(this); };
-
-                    // 2. Lafadz Tengah
-                    let spanTengah = document.createElement("span");
-                    spanTengah.className = "lafadz-tengah";
-                    spanTengah.innerText = kata;
-
-                    // 3. Makna Bawah
-                    let spanBawah = document.createElement("span");
-                    spanBawah.className = "makna-bawah titik-kosong";
-                    spanBawah.contentEditable = "true";
-                    spanBawah.innerText = "...";
-                    spanBawah.onfocus = function() { elemenAktif = this; };
-                    spanBawah.oninput = function() { checkTitikKosong(this); };
-
-                    // Deteksi shortcut keyboard fisik laptop
-                    spanBawah.onkeydown = function(e) {
-                        if (e.key === "Tab") {
-                            e.preventDefault();
-                            let tabSpan = document.createElement("span");
-                            tabSpan.className = "tab-space";
-                            tabSpan.contentEditable = "false";
-                            this.appendChild(tabSpan);
-                            moveCursorToEnd(this);
-                        }
-                    };
-
-                    box.appendChild(spanAtas);
-                    box.appendChild(spanTengah);
-                    box.appendChild(spanBawah);
-                    wordsContainer.appendChild(box);
-                });
-
-                rowDiv.appendChild(wordsContainer);
-                boxKitab.appendChild(rowDiv);
-            });
-        }
-
-        function checkTitikKosong(el) {
-            if(el.innerText.trim() !== "..." && el.innerText.trim() !== "") {
-                el.classList.remove("titik-kosong");
-            } else {
-                el.classList.add("titik-kosong");
-            }
-        }
-
-        function tulisKeAktif(jenis, teks) {
-            if (!elemenAktif) return;
+        function setKeyboardMode(mode) {
+            let spans = document.querySelectorAll('#boxKitab [contenteditable="true"]');
+            let vk = document.getElementById("virtualKeyboard");
+            let btnToggle = document.getElementById("btnToggleVK");
             
-            if (jenis === "spasi") {
-                let tabSpan = document.createElement("span");
-                tabSpan.className = "tab-space";
-                tabSpan.contentEditable = "false";
-                elemenAktif.appendChild(tabSpan);
+            if (mode === 'virtual') {
+                spans.forEach(span => span.setAttribute('inputmode', 'none'));
+                vk.style.display = "flex";
+                btnToggle.innerHTML = "⬇ Tutup Keyboard Pegon";
             } else {
-                if (elemenAktif.innerText === "...") {
-                    elemenAktif.innerText = "";
-                    elemenAktif.classList.remove("titik-kosong");
+                spans.forEach(span => span.removeAttribute('inputmode'));
+                vk.style.display = "none";
+                btnToggle.innerHTML = "⌨️ Buka Keyboard Pegon";
+            }
+        }
+
+        function toggleVirtualKeyboard() {
+            let vk = document.getElementById("virtualKeyboard");
+            let rVirtual = document.querySelector('input[name="kbdMode"][value="virtual"]');
+            let rNative = document.querySelector('input[name="kbdMode"][value="native"]');
+            
+            if(vk.style.display === "none" || vk.style.display === "") {
+                rVirtual.checked = true;
+                setKeyboardMode('virtual');
+            } else {
+                rNative.checked = true;
+                setKeyboardMode('native');
+            }
+        }
+
+        function switchVKTab(tabId) {
+            let contents = document.querySelectorAll('.vk-tab-content');
+            contents.forEach(c => c.classList.remove('active-tab'));
+            let tabs = document.querySelectorAll('.vk-tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active-tab');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        function ketikVK(event, karakter) {
+            event.preventDefault(); 
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            if (karakter === 'BACKSPACE') {
+                document.execCommand('delete', false, null);
+            } else if (karakter === 'SPACE') {
+                document.execCommand('insertText', false, ' ');
+            } else if (karakter === 'ENTER') {
+                document.execCommand('insertLineBreak');
+            } else {
+                sisipkanKarakter(karakter);
+            }
+        }
+
+        function ketikRujukVK(event, simbol) {
+            event.preventDefault();
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            let range = selection.getRangeAt(0);
+            range.deleteContents();
+            
+            let rujukNode = document.createElement("span");
+            rujukNode.className = "rujuk-style";
+            rujukNode.innerText = simbol;
+            
+            range.insertNode(rujukNode);
+            range.setStartAfter(rujukNode);
+            range.setEndAfter(rujukNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        function konversiAngkaInput(el) {
+            let modeBahasa = document.querySelector('input[name="bahasa"]:checked').value;
+            if(modeBahasa === 'arab') {
+                el.value = el.value.replace(/[0-9]/g, function(w) { return mapAngkaArab[w]; });
+            }
+        }
+
+        function tangkapKetikanEditor(e) {
+            let modeBahasa = document.querySelector('input[name="bahasa"]:checked').value;
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                buatJarakTab();
+                return;
+            }
+            if (modeBahasa === 'arab' && e.key >= '0' && e.key <= '9') {
+                e.preventDefault();
+                sisipkanKarakter(mapAngkaArab[e.key]);
+            }
+        }
+
+        function sisipkanKarakter(karakter) {
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            let range = selection.getRangeAt(0);
+            range.deleteContents();
+            
+            let textNode = document.createTextNode(karakter);
+            range.insertNode(textNode);
+            
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        function buatJarakTab() {
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            let range = selection.getRangeAt(0);
+            let tabNode = document.createElement("span");
+            tabNode.className = "tab-space";
+            tabNode.innerHTML = "&nbsp;"; 
+            tabNode.setAttribute("contenteditable", "false");
+            range.deleteContents();
+            range.insertNode(tabNode);
+            range.setStartAfter(tabNode);
+            range.setEndAfter(tabNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        function gantiModeBahasa(mode) {
+            let txtArea = document.getElementById("inputTeks");
+            let boxKitab = document.getElementById("boxKitab");
+            let panelKbd = document.getElementById("panelKbdMode");
+            
+            if(mode === 'arab') {
+                txtArea.className = "mode-arab-input";
+                boxKitab.className = "workspace-paragraph mode-arab-workspace";
+                txtArea.placeholder = "Paste teks Arab di sini...";
+                panelKbd.style.display = "block";
+                document.getElementById("btnToggleVK").style.display = "inline-block";
+            } else {
+                txtArea.className = "mode-inggris-input";
+                boxKitab.className = "workspace-paragraph mode-inggris-workspace";
+                txtArea.placeholder = "Example:\nAlhamdu lillahi rabbil 'alamin...";
+                panelKbd.style.display = "none";
+                document.getElementById("btnToggleVK").style.display = "none";
+                document.getElementById("virtualKeyboard").style.display = "none";
+                document.querySelector('input[name="kbdMode"][value="native"]').checked = true;
+            }
+            boxKitab.innerHTML = `<span style="color:#aaa; font-family:sans-serif; font-size:15px;">Hasil plot kata otomatis akan muncul di sini...</span>`;
+            document.getElementById("btnPDF").style.display = "none";
+            document.getElementById("btnGambar").style.display = "none";
+        }
+
+        function prosesTeksJebret() {
+            let teksMentah = document.getElementById("inputTeks").value.trim();
+            if (teksMentah === "") { alert("Silakan paste teks terlebih dahulu!"); return; }
+
+            let modeBahasa = document.querySelector('input[name="bahasa"]:checked').value;
+            let kumpulanBaris = teksMentah.split(/\r?\n/);
+            let htmlHasil = "";
+            let defaultAlign = (modeBahasa === 'arab') ? 'right' : 'left';
+            
+            let kbdMode = document.querySelector('input[name="kbdMode"]:checked').value;
+            let inputModeAttr = (kbdMode === 'virtual') ? 'inputmode="none"' : '';
+
+            kumpulanBaris.forEach(function(baris, indexBaris) {
+                let barisBersih = baris.trim();
+                if (barisBersih === "") {
+                    htmlHasil += `<div class="gandul-row" style="height: 3.5rem;"><div class="row-align-toolbar" style="display:none;"></div></div>`;
+                    return;
                 }
+
+                let kumpulanKata = barisBersih.split(/\s+/);
+                htmlHasil += `<div class="gandul-row" id="row-${indexBaris}">`;
                 
-                if (teks === " ") {
-                    elemenAktif.innerHTML += "&nbsp;";
-                } else {
-                    elemenAktif.innerText += teks;
+                htmlHasil += `
+                    <div class="row-align-toolbar">
+                        <button class="btn-row-align ${defaultAlign==='left'?'active':''}" onclick="ubahPerataanBaris(${indexBaris}, 'left', this)">☰ Kiri</button>
+                        <button class="btn-row-align ${defaultAlign==='center'?'active':''}" onclick="ubahPerataanBaris(${indexBaris}, 'center', this)">☲ Tengah</button>
+                        <button class="btn-row-align ${defaultAlign==='right'?'active':''}" onclick="ubahPerataanBaris(${indexBaris}, 'right', this)">☴ Kanan</button>
+                        <button class="btn-row-align ${defaultAlign==='justify'?'active':''}" onclick="ubahPerataanBaris(${indexBaris}, 'justify', this)">☵ Justify</button>
+                        <button class="btn-row-align btn-tab-indent" onclick="buatJarakTab()">⇥ Tab</button>
+                        <button class="btn-row-align btn-format-text" onclick="eksekusiFormat('superscript')">X²</button>
+                        <button class="btn-row-align btn-format-text" onclick="eksekusiFormat('subscript')">X₂</button>
+                        <button class="btn-row-align btn-undo-text" onclick="eksekusiFormat('undo')">↩ Undo</button>
+                    </div>
+                `;
+
+                htmlHasil += `<div class="gandul-words-container" style="text-align: ${defaultAlign};">`;
+                kumpulanKata.forEach(function(kata) {
+                    htmlHasil += `
+                        <div class="gandul-box">
+                            <span class="nahwu-atas" contenteditable="true" ${inputModeAttr} onkeydown="tangkapKetikanEditor(event)"></span>
+                            <span class="lafadz-tengah" contenteditable="true" ${inputModeAttr} onkeydown="tangkapKetikanEditor(event)">${kata}</span>
+                            <span class="makna-bawah" contenteditable="true" ${inputModeAttr} onkeydown="tangkapKetikanEditor(event)">...</span>
+                        </div>
+                    `;
+                });
+                htmlHasil += `</div></div>`;
+            });
+
+            document.getElementById("boxKitab").innerHTML = htmlHasil;
+            document.getElementById("btnPDF").style.display = "inline-block";
+            document.getElementById("btnGambar").style.display = "inline-block";
+            
+            if(kbdMode === 'virtual') setKeyboardMode('virtual');
+        }
+
+        function eksekusiFormat(perintah) { document.execCommand(perintah, false, null); }
+
+        function ubahPerataanBaris(indexBaris, modeAlign, tombolKlik) {
+            let rowAktif = document.getElementById("row-" + indexBaris);
+            let containerKata = rowAktif.querySelector(".gandul-words-container");
+            containerKata.style.textAlign = modeAlign;
+            let seluruhTombolToolbar = rowAktif.querySelectorAll(".btn-row-align");
+            seluruhTombolToolbar.forEach(function(btn) {
+                if(!btn.classList.contains('btn-tab-indent') && !btn.classList.contains('btn-format-text') && !btn.classList.contains('btn-undo-text')) {
+                    btn.classList.remove("active");
                 }
-            }
-            moveCursorToEnd(elemenAktif);
-        }
-
-        function hapusAktif() {
-            if (!elemenAktif) return;
-            elemenAktif.innerText = "...";
-            elemenAktif.classList.add("titik-kosong");
-        }
-
-        function moveCursorToEnd(el) {
-            el.focus();
-            if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-                let range = document.createRange();
-                range.selectNodeContents(el);
-                range.collapse(false);
-                let sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
+            });
+            tombolKlik.classList.add("active");
         }
 
         function sembunyikanTitikKosong() {
-            let editables = document.querySelectorAll(".titik-kosong");
-            editables.forEach(el => {
-                if(el.innerText.trim() === "...") { el.innerText = ""; }
+            let spans = document.querySelectorAll('#boxKitab .nahwu-atas, #boxKitab .lafadz-tengah, #boxKitab .makna-bawah');
+            spans.forEach(span => {
+                if(span.innerText.trim() === '...' || span.innerText.trim() === '') {
+                    span.classList.add('titik-kosong');
+                } else {
+                    span.classList.remove('titik-kosong');
+                }
             });
         }
 
         function cetakPDF() {
             sembunyikanTitikKosong();
-            let vk = document.getElementById("vk");
-            vk.style.display = "none";
-            
+            window.print();
+        }
+
+        function simpanSebagaiGambar() {
             let areaKerja = document.getElementById("boxKitab");
+            let btn = document.getElementById("btnGambar");
+            let teksAsli = btn.innerHTML;
+            btn.innerHTML = "⌛ Menyimpan...";
+            btn.disabled = true;
+
+            sembunyikanTitikKosong();
             areaKerja.classList.add("hide-for-capture");
 
-            window.print();
-
-            setTimeout(function() {
-                areaKerja.classList.remove("hide-for-capture");
-                let kbdMode = document.querySelector('input[name="kbdMode"]:checked').value;
-                if (kbdMode === 'virtual') vk.style.display = "flex";
-            }, 3000);
-        }
-
-        function salinKodeBlog() {
-            let dummyDiv = document.createElement("div");
-            dummyDiv.innerHTML = document.getElementById("boxKitab").innerHTML;
-            
-            let toolbars = dummyDiv.querySelectorAll(".row-align-toolbar");
-            toolbars.forEach(tb => tb.remove());
-            
-            let editables = dummyDiv.querySelectorAll("[contenteditable]");
-            editables.forEach(el => {
-                el.removeAttribute("contenteditable");
-                el.removeAttribute("inputmode");
-                el.removeAttribute("onkeydown");
-                if(el.innerText.trim() === "..." || el.innerText.trim() === "") {
-                    el.innerText = "";
-                }
-            });
-            
-            let kodeBersih = dummyDiv.innerHTML.trim();
-            
-            navigator.clipboard.writeText(kodeBersih).then(function() {
-                alert("📋 KODE BERHASIL DISALIN!\n\nSilakan buka Dasbor Blog Blogger, masuk ke mode 'Tampilan HTML', lalu Paste kodenya di sana.");
-            }).catch(function(err) {
-                alert("Gagal menyalin kode. Silakan coba lagi.");
-            });
+            // Menggunakan dom-to-image yang lebih pintar baca Pegon
+            domtoimage.toPng(areaKerja, { bgcolor: '#ffffff' })
+                .then(function (dataUrl) {
+                    let linkGambar = document.createElement('a');
+                    linkGambar.download = 'makna-gandul-' + Date.now() + '.png';
+                    linkGambar.href = dataUrl;
+                    linkGambar.click();
+                    
+                    areaKerja.classList.remove("hide-for-capture");
+                    btn.innerHTML = teksAsli;
+                    btn.disabled = false;
+                })
+                .catch(function (error) {
+                    areaKerja.classList.remove("hide-for-capture");
+                    alert("Gagal: " + error);
+                    btn.innerHTML = teksAsli;
+                    btn.disabled = false;
+                });
         }
     </script>
+
 </body>
 </html>
