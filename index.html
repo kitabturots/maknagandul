@@ -78,6 +78,7 @@
         #btnToggleVK:hover { background-color: #59339d; }
         #btnPDF { background-color: #dc3545; display: none; }
         #btnGambar { background-color: #17a2b8; display: none; }
+        #btnCopyBlog { background-color: #fd7e14; display: none; }
 
         /* AREA WORKSPACE UTAMA PARAGRAF */
         .workspace-paragraph {
@@ -196,7 +197,7 @@
         .vk-btn.pepet { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
         .vk-btn.rujuk-key { color: #b30000; text-decoration: underline double; text-underline-offset: 3px; font-weight: bold; }
 
-        /* RESPONSIVE SMARTPHONE (HP) */
+        /* RESPONSIVE SMARTPHONE */
         @media (max-width: 600px) {
             body { padding: 8px; padding-bottom: 240px; }
             .container { padding: 12px; border-radius: 8px; }
@@ -254,6 +255,7 @@
                 <button id="btnToggleVK" class="btn-main" onclick="toggleVirtualKeyboard()">⌨️ Buka Keyboard Pegon</button>
                 <button id="btnPDF" class="btn-main" onclick="cetakPDF()">📄 Simpan PDF</button>
                 <button id="btnGambar" class="btn-main" onclick="simpanSebagaiGambar()">🖼️ Siapkan Layar Gambar</button>
+                <button id="btnCopyBlog" class="btn-main" onclick="salinKodeBlog()">📋 Salin Kode Blog (HTML)</button>
             </div>
         </div>
 
@@ -348,8 +350,8 @@
         <div id="tab-rujuk" class="vk-tab-content">
             <div class="vk-row">
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـ')">هـ</button>
-                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـا')">هـا</button>
-                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـم')">هـم</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـa')">هـا</button>
+                <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'هـm')">هـم</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' ك')">ك</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, ' م')">م</button>
                 <button class="vk-btn rujuk-key" onmousedown="ketikRujukVK(event, 'خ')">خ</button>
@@ -529,6 +531,7 @@
             boxKitab.innerHTML = `<span style="color:#aaa; font-family:sans-serif; font-size:15px;">Hasil plot kata otomatis akan muncul di sini...</span>`;
             document.getElementById("btnPDF").style.display = "none";
             document.getElementById("btnGambar").style.display = "none";
+            document.getElementById("btnCopyBlog").style.display = "none";
         }
 
         function prosesTeksJebret() {
@@ -582,6 +585,7 @@
             document.getElementById("boxKitab").innerHTML = htmlHasil;
             document.getElementById("btnPDF").style.display = "inline-block";
             document.getElementById("btnGambar").style.display = "inline-block";
+            document.getElementById("btnCopyBlog").style.display = "inline-block";
             
             if(kbdMode === 'virtual') setKeyboardMode('virtual');
         }
@@ -621,15 +625,12 @@
             let areaKerja = document.getElementById("boxKitab");
             let vk = document.getElementById("virtualKeyboard");
             
-            // 1. Sembunyikan semua titik kosong dan toolbar biar bersih
             sembunyikanTitikKosong();
             areaKerja.classList.add("hide-for-capture");
             vk.style.display = "none";
             
-            // 2. Beri notifikasi ke pengguna untuk screenshot manual
             alert("Layar dibersihkan! SILAKAN SCREENSHOT HP ANDA SEKARANG untuk hasil Pegon yang 100% lurus, rapi, dan gandeng!");
             
-            // 3. Kembalikan toolbar & keyboard setelah 8 detik (memberi waktu bernafas untuk screenshot)
             setTimeout(function() {
                 areaKerja.classList.remove("hide-for-capture");
                 let kbdMode = document.querySelector('input[name="kbdMode"]:checked').value;
@@ -637,6 +638,33 @@
                     vk.style.display = "flex";
                 }
             }, 8000);
+        }
+
+        function salinKodeBlog() {
+            let dummyDiv = document.createElement("div");
+            dummyDiv.innerHTML = document.getElementById("boxKitab").innerHTML;
+            
+            let toolbars = dummyDiv.querySelectorAll(".row-align-toolbar");
+            toolbars.forEach(tb => tb.remove());
+            
+            let editables = dummyDiv.querySelectorAll("[contenteditable]");
+            editables.forEach(el => {
+                el.removeAttribute("contenteditable");
+                el.removeAttribute("inputmode");
+                el.removeAttribute("onkeydown");
+                
+                if(el.innerText.trim() === "..." || el.innerText.trim() === "") {
+                    el.innerText = "";
+                }
+            });
+            
+            let kodeBersih = dummyDiv.innerHTML.trim();
+            
+            navigator.clipboard.writeText(kodeBersih).then(function() {
+                alert("📋 KODE BERHASIL DISALIN!\n\nSilakan buka Dasbor Blog (Blogger/Wordpress), masuk ke mode 'Tampilan HTML', lalu Paste kodenya di sana.");
+            }).catch(function(err) {
+                alert("Gagal menyalin kode secara otomatis. Silakan coba lagi.");
+            });
         }
     </script>
 
