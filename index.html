@@ -191,6 +191,12 @@
             .gandul-row { border-top: none !important; padding-top: 0 !important; }
             .titik-kosong { color: transparent !important; }
 
+            /* PERBAIKAN: Menghilangkan tombol hapus alih bahasa dan footnote bawaan saat print */
+            .footnote-container button, 
+            .alih-bahasa-box button { 
+                display: none !important; 
+            }
+
             /* SINGLE SPACING PDF */
             .workspace-paragraph { line-height: 1.5 !important; }
             .gandul-row { margin-bottom: 5px !important; padding-top: 15px !important; }
@@ -211,11 +217,16 @@
             .pos-bottom-right { bottom: 10mm; right: 15mm; }
         }
 
+        /* PERBAIKAN: Menyembunyikan tombol hapus bawaan ketika diekstrak ke mode GAMBAR (.hide-for-capture) */
         .hide-for-capture .row-align-toolbar, .hide-for-capture .vk-container { display: none !important; }
         .hide-for-capture .gandul-row { border-top: none !important; padding-top: 0 !important; }
         .hide-for-capture .nahwu-atas { border-bottom: none !important; }
         .hide-for-capture .makna-bawah { border-top: none !important; }
         .hide-for-capture .titik-kosong { color: transparent !important; }
+        .hide-for-capture .footnote-container button, 
+        .hide-for-capture .alih-bahasa-box button { 
+            display: none !important; 
+        }
     </style>
 </head>
 <body>
@@ -707,7 +718,6 @@
                 htmlHasil += `</div></div>`;
             });
 
-            // Perhatian: Hanya overwrite di dalam gandulWrapper, jadi blok Alih Bahasa & Footnote Bosku tidak akan hilang!
             document.getElementById("gandulWrapper").innerHTML = htmlHasil;
             document.getElementById("btnPDF").style.display = "inline-block";
             document.getElementById("btnGambar").style.display = "inline-block";
