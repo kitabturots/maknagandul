@@ -16,6 +16,7 @@
             background-color: #f5f4f0;
             margin: 0;
             padding-bottom: 280px; 
+            counter-reset: page var(--start-page, 1);
         }
         
         .container {
@@ -42,26 +43,17 @@
             font-size: 14px;
         }
         .mode-selector label, .kbd-mode-selector label {
-            display: inline-block;
-            margin-right: 15px;
-            margin-top: 5px;
-            cursor: pointer;
-            font-weight: normal;
+            display: inline-block; margin-right: 15px; margin-top: 5px; cursor: pointer; font-weight: normal;
         }
         .mode-selector input, .kbd-mode-selector input { margin-right: 5px; cursor: pointer; }
 
         .kbd-mode-selector {
-            background: #d4edda;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #c3e6cb;
-            color: #155724;
+            background: #d4edda; padding: 10px; border-radius: 6px; border: 1px solid #c3e6cb; color: #155724;
         }
 
         textarea {
             width: 100%; height: 90px; font-size: 16px; padding: 10px;
-            border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
-            resize: vertical;
+            border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical;
         }
 
         .mode-arab-input { direction: rtl; font-family: 'Traditional Arabic', serif; font-size: 22px; }
@@ -85,8 +77,7 @@
         .workspace-paragraph {
             border: 1px solid #ced4da; padding: 20px 15px; min-height: 250px;
             border-radius: 8px; background-color: #ffffff;
-            line-height: 3.5; 
-            display: block; overflow: hidden; text-align: right; 
+            line-height: 3.5; display: block; overflow: hidden; text-align: right; 
         }
 
         .gandul-row {
@@ -105,8 +96,7 @@
 
         .btn-row-align {
             background: white; border: 1px solid #ced4da; color: #495057;
-            padding: 3px 6px; font-size: 11px; cursor: pointer; border-radius: 3px; margin: 0;
-            display: inline-block;
+            padding: 3px 6px; font-size: 11px; cursor: pointer; border-radius: 3px; margin: 0; display: inline-block;
         }
         .btn-row-align.active { background: #007bff; color: white; border-color: #007bff; font-weight: bold; }
         .btn-tab-indent { background-color: #6f42c1; color: white; border-color: #6f42c1; }
@@ -114,21 +104,13 @@
         .btn-undo-text { background-color: #6c757d; color: white; border-color: #6c757d; }
 
         .gandul-words-container { display: block; width: 100%; }
-        
         .tab-space { display: inline-block; width: 30px; height: 10px; }
 
-        /* KONFIGURASI TAMPILAN BAHASA & PEGON */
+        /* KONFIGURASI TAMPILAN ARAB/PEGON DASAR */
         .mode-arab-workspace { direction: rtl; }
-        
         .mode-arab-workspace .gandul-box {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center; 
-            justify-content: flex-end; 
-            margin-left: 20px; 
-            margin-bottom: 25px; 
-            vertical-align: bottom;
-            line-height: 1; 
+            display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-end; 
+            margin-left: 20px; vertical-align: bottom; line-height: 1; 
         }
 
         .mode-arab-workspace .nahwu-atas { 
@@ -139,14 +121,27 @@
             text-align: center; font-size: 28px; font-weight: bold; color: #000000; 
             font-family: 'Traditional Arabic', serif; min-width: 35px; min-height: 32px;
         }
+
+        /* GAYA MAKNA DASAR (BELUM DITENTUKAN MIRING/LURUS) */
         .mode-arab-workspace .makna-bawah { 
-            text-align: right; font-size: 18px; color: #555555; 
-            font-family: 'Traditional Arabic', serif; white-space: nowrap; min-width: 35px; 
-            border-top: 1px dashed #e0e0e0; margin-top: 5px; align-self: flex-start;
-            display: inline-block; transform: rotate(-35deg); transform-origin: top right; padding-right: 4px;
-            min-height: 22px; direction: rtl; 
+            font-size: 18px; color: #555555; font-family: 'Traditional Arabic', serif; white-space: nowrap; min-width: 35px; 
+            border-top: 1px dashed #e0e0e0; margin-top: 5px; display: inline-block; direction: rtl; 
         }
 
+        /* == VARIAN GAYA: MIRING (KLASIK) == */
+        .mode-arab-workspace.gaya-miring .gandul-box { margin-bottom: 25px; }
+        .mode-arab-workspace.gaya-miring .makna-bawah {
+            transform: rotate(-35deg); transform-origin: top right; padding-right: 4px;
+            min-height: 22px; text-align: right; align-self: flex-start;
+        }
+
+        /* == VARIAN GAYA: LURUS (BIASA) == */
+        .mode-arab-workspace.gaya-lurus .gandul-box { margin-bottom: 15px; }
+        .mode-arab-workspace.gaya-lurus .makna-bawah {
+            transform: none; text-align: center; align-self: center; min-height: auto;
+        }
+
+        /* TAMPILAN INGGRIS / LATIN */
         .mode-inggris-workspace { direction: ltr; }
         .mode-inggris-workspace .gandul-box { margin-right: 12px; display: inline-flex; flex-direction: column; align-items: flex-start; margin-bottom: 5px; vertical-align: bottom; line-height: 1.1; }
         .mode-inggris-workspace .nahwu-atas { text-align: left; font-size: 11px; color: #0056b3; font-weight: bold; min-width: 25px; border-bottom: 1px dashed #cce5ff; margin-bottom: 3px; align-self: flex-start; min-height: 14px;}
@@ -154,67 +149,37 @@
         .mode-inggris-workspace .makna-bawah { text-align: left; font-size: 13px; color: #555555; white-space: nowrap; min-width: 35px; border-top: 1px dashed #e0e0e0; margin-top: 5px; align-self: flex-start; min-height: 16px;}
 
         sup, sub { line-height: 0; }
-        .rujuk-style { color: #b30000; font-weight: bold; text-decoration: underline double; text-underline-offset: 3px; }
+        .rujuk-style { color: #b30000; font-weight: bold; text-decoration: underline double; text-underline-offset: 3px; cursor: pointer; }
 
         /* KEYBOARD VIRTUAL PEGON */
         .vk-container {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: #d1d5db; padding: 8px 4px;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-            z-index: 9999; display: none; flex-direction: column; gap: 5px;
+            position: fixed; bottom: 0; left: 0; right: 0; background: #d1d5db; padding: 8px 4px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2); z-index: 9999; display: none; flex-direction: column; gap: 5px;
             align-items: center; user-select: none; direction: ltr;
         }
         .vk-header {
-            width: 100%; max-width: 750px; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid #b91c1c20; padding-bottom: 6px;
+            width: 100%; max-width: 750px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #b91c1c20; padding-bottom: 6px;
         }
         .vk-tabs { display: flex; gap: 3px; }
         .vk-tab-btn {
-            background: #e5e7eb; border: 1px solid #9ca3af; border-radius: 4px;
-            padding: 6px 10px; font-size: 12px; font-weight: bold; cursor: pointer; color: #374151;
+            background: #e5e7eb; border: 1px solid #9ca3af; border-radius: 4px; padding: 6px 10px; font-size: 12px; font-weight: bold; cursor: pointer; color: #374151;
         }
         .vk-tab-btn.active { background: #6f42c1; color: white; border-color: #59339d; }
-        .vk-close {
-            background: #dc3545; color: white; border: none; border-radius: 4px;
-            padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: bold;
-        }
-        
+        .vk-close { background: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: bold; }
         .vk-tab-content { display: none; width: 100%; max-width: 750px; flex-direction: column; gap: 5px; }
         .vk-tab-content.active-tab { display: flex; }
-
         .vk-row { display: flex; gap: 3px; justify-content: center; width: 100%; }
-        
         .vk-btn {
-            background: #ffffff; border: none; border-radius: 5px;
-            box-shadow: 0 1.5px 0 #9ca3af; color: #111; font-size: 20px;
-            font-family: 'Traditional Arabic', serif; flex: 1; padding: 8px 0;
-            cursor: pointer; text-align: center; display: flex;
-            align-items: center; justify-content: center; min-width: 22px;
+            background: #ffffff; border: none; border-radius: 5px; box-shadow: 0 1.5px 0 #9ca3af; color: #111; font-size: 20px; font-family: 'Traditional Arabic', serif; flex: 1; padding: 8px 0; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; min-width: 22px;
         }
         .vk-btn:active { background: #e5e7eb; transform: translateY(1.5px); box-shadow: 0 0 0 #9ca3af; }
-        
         .vk-btn.wide { flex: 1.5; font-size: 14px; background: #9ca3af; color: white; box-shadow: 0 1.5px 0 #6b7280;}
         .vk-btn.space { flex: 4; font-size: 14px; }
         .vk-btn.pepet { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
         .vk-btn.rujuk-key { color: #b30000; text-decoration: underline double; text-underline-offset: 3px; font-weight: bold; }
 
-        /* RESPONSIVE SMARTPHONE (HP) */
-        @media (max-width: 600px) {
-            body { padding: 8px; padding-bottom: 240px; }
-            .container { padding: 12px; border-radius: 8px; }
-            h2 { font-size: 18px; }
-            .vk-btn { padding: 10px 0; font-size: 18px; }
-            .vk-tab-btn { padding: 5px 6px; font-size: 11px; }
-            .mode-arab-workspace .lafadz-tengah { font-size: 24px; }
-            .mode-arab-workspace .makna-bawah { font-size: 16px; }
-            button.btn-main { padding: 8px 10px; font-size: 13px; min-width: 120px; }
-        }
-
-        /* =========================================================================
-           PRINT SETTINGS / PENGATURAN PDF:
-           Bagian ini HANYA aktif saat tombol 'Simpan PDF' ditekan. 
-           Tujuannya untuk merapatkan baris agar menghemat kertas!
-           ========================================================================= */
+        /* KUSTOMISASI PAGE NUMBER & PRINT SETTINGS */
+        .page-number-display { display: none; }
         @media print {
             body { background-color: #ffffff; padding: 10mm; padding-bottom: 0; }
             .container { box-shadow: none; padding: 0; max-width: 100%; }
@@ -226,17 +191,24 @@
             .gandul-row { border-top: none !important; padding-top: 0 !important; }
             .titik-kosong { color: transparent !important; }
 
-            /* MANTRA KHUSUS UNTUK MEMADATKAN JARAK BARIS SAAT DICETAK */
-            .workspace-paragraph {
-                line-height: 1.5 !important; /* Jarak dibuat merapat setara Single Spacing */
+            /* SINGLE SPACING PDF */
+            .workspace-paragraph { line-height: 1.5 !important; }
+            .gandul-row { margin-bottom: 5px !important; padding-top: 15px !important; }
+            .mode-arab-workspace.gaya-miring .gandul-box { margin-bottom: 30px !important; }
+            .mode-arab-workspace.gaya-lurus .gandul-box { margin-bottom: 5px !important; }
+
+            /* STYLING PAGE NUMBER SAAT CETAK */
+            .page-number-display.active-print { 
+                display: block; position: fixed; font-size: 12pt; font-family: 'Times New Roman', serif; color: #000; z-index: 9999; 
             }
-            .gandul-row { 
-                margin-bottom: 5px !important; 
-                padding-top: 15px !important; 
-            }
-            .mode-arab-workspace .gandul-box {
-                margin-bottom: 30px !important; /* Ruang sedikit agar ekor makna bawah tidak bertabrakan dengan baris bawahnya */
-            }
+            .page-number-display.active-print::after { content: counter(page); }
+            
+            .pos-top-left { top: 10mm; left: 15mm; }
+            .pos-top-center { top: 10mm; left: 50%; transform: translateX(-50%); }
+            .pos-top-right { top: 10mm; right: 15mm; }
+            .pos-bottom-left { bottom: 10mm; left: 15mm; }
+            .pos-bottom-center { bottom: 10mm; left: 50%; transform: translateX(-50%); }
+            .pos-bottom-right { bottom: 10mm; right: 15mm; }
         }
 
         .hide-for-capture .row-align-toolbar, .hide-for-capture .vk-container { display: none !important; }
@@ -248,6 +220,8 @@
 </head>
 <body>
 
+    <div id="pageNumberDisplay" class="page-number-display active-print pos-bottom-right"></div>
+
     <div class="container">
         <h2>Editor Makna Gandul Nusantara</h2>
         
@@ -256,6 +230,12 @@
                 Mode Teks Utama:
                 <label><input type="radio" id="radioArab" name="bahasa" value="arab" checked onclick="gantiModeBahasa('arab')"> Arab / Pegon</label>
                 <label><input type="radio" id="radioInggris" name="bahasa" value="inggris" onclick="gantiModeBahasa('inggris')"> Inggris / Latin</label>
+            </div>
+
+            <div class="mode-selector" id="panelGayaMakna">
+                Gaya Makna Bawah:
+                <label><input type="radio" name="gayaMakna" value="miring" checked onclick="ubahGayaMakna()"> 📐 Miring (Klasik)</label>
+                <label><input type="radio" name="gayaMakna" value="lurus" onclick="ubahGayaMakna()"> 📏 Lurus (Biasa)</label>
             </div>
 
             <div class="kbd-mode-selector" id="panelKbdMode">
@@ -272,13 +252,41 @@
                 <button id="btnPDF" class="btn-main" onclick="cetakPDF()">📄 Simpan PDF</button>
                 <button id="btnGambar" class="btn-main" onclick="simpanSebagaiGambar()">🖼️ Simpan Gambar</button>
             </div>
+
+            <div class="tools-panel hide-for-capture" style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 15px; border: 1px solid #dee2e6;">
+                <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #495057;">🛠️ Fitur Ekstra (PDF & Terjemahan):</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <button onclick="tambahAlihBahasa()" style="background: #0d6efd; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold;">📝 + Blok Alih Bahasa</button>
+                    <button onclick="tambahFootnote()" style="background: #198754; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold;">📌 + Footnote (Kursor)</button>
+                    
+                    <div style="border-left: 2px solid #dee2e6; height: 24px; margin: 0 5px;"></div>
+                    
+                    <div style="font-size: 13px; display: flex; align-items: center; gap: 5px;">
+                        <strong>Posisi Hal:</strong>
+                        <select id="pageNumberPosition" onchange="updatePageNumberStyle()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                            <option value="none">Sembunyikan</option>
+                            <option value="top-left">Top Left (Kiri Atas)</option>
+                            <option value="top-center">Top Center (Tengah Atas)</option>
+                            <option value="top-right">Top Right (Kanan Atas)</option>
+                            <option value="bottom-left">Bottom Left (Kiri Bawah)</option>
+                            <option value="bottom-center">Bottom Center (Tengah Bawah)</option>
+                            <option value="bottom-right" selected>Bottom Right (Kanan Bawah)</option>
+                        </select>
+                        <strong>Mulai:</strong>
+                        <input type="number" id="pageNumberStart" value="1" min="1" style="width: 50px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;" onchange="updatePageNumberStyle()">
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #6c757d; margin-top: 6px; font-style: italic;">*Catatan: Nomor halaman otomatis terkadang membutuhkan centang "Headers and footers" pada menu pengaturan Print browser.</div>
+            </div>
         </div>
 
-        <div id="boxKitab" class="workspace-paragraph mode-arab-workspace">
-            <span style="color:#aaa; font-family:sans-serif; font-size:15px;">
-                Hasil plot kata otomatis akan muncul di sini...
-            </span>
-        </div>
+        <div id="boxKitab" class="workspace-paragraph mode-arab-workspace gaya-miring">
+            <div id="gandulWrapper">
+                <span style="color:#aaa; font-family:sans-serif; font-size:15px;">
+                    Hasil plot kata otomatis akan muncul di sini...
+                </span>
+            </div>
+            </div>
     </div>
 
     <div id="virtualKeyboard" class="vk-container">
@@ -399,6 +407,110 @@
     <script>
         const mapAngkaArab = {'0':'٠','1':'١','2':'٢','3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩'};
 
+        // ==== FITUR UPDATE POSISI NOMOR HALAMAN ====
+        function updatePageNumberStyle() {
+            let start = document.getElementById("pageNumberStart").value || 1;
+            let pos = document.getElementById("pageNumberPosition").value;
+            
+            document.body.style.setProperty('--start-page', start - 1);
+            
+            let display = document.getElementById("pageNumberDisplay");
+            if(pos === 'none') {
+                display.classList.remove('active-print');
+            } else {
+                display.classList.add('active-print');
+                display.className = `page-number-display active-print pos-${pos}`;
+            }
+        }
+        
+        // Panggil saat aplikasi baru dimuat
+        window.onload = updatePageNumberStyle;
+
+        // ==== FITUR TAMBAH BLOK ALIH BAHASA (TERJEMAHAN LATIN) ====
+        function tambahAlihBahasa() {
+            let container = document.getElementById("boxKitab");
+            let alihDiv = document.createElement("div");
+            alihDiv.className = "alih-bahasa-box";
+            alihDiv.style.cssText = "margin-top: 30px; text-align: left; direction: ltr; font-family: Arial, sans-serif;";
+            
+            alihDiv.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 10px;" contenteditable="false">
+                    <strong contenteditable="true" style="font-size: 14px; letter-spacing: 1px; margin-right: 10px; color: #555;">ALIH BAHASA</strong>
+                    <div style="flex-grow: 1; height: 1px; background-color: #aaa;"></div>
+                </div>
+                <div contenteditable="true" style="line-height: 1.6; font-size: 15px; text-align: justify;">
+                    Ketik terjemahan bebas Latin di sini...
+                </div>
+                <button class="hide-for-capture" onclick="this.parentElement.remove()" style="margin-top: 10px; font-size: 11px; background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer;">Hapus Blok Ini</button>
+            `;
+            
+            // Masukkan sebelum area footnote jika ada, kalau belum ada taruh paling bawah
+            let fnContainer = document.getElementById("footnoteContainer");
+            if (fnContainer) {
+                container.insertBefore(alihDiv, fnContainer);
+            } else {
+                container.appendChild(alihDiv);
+            }
+        }
+
+        // ==== FITUR TAMBAH FOOTNOTE ====
+        function tambahFootnote() {
+            let selection = window.getSelection();
+            if (!selection.rangeCount) return alert("Klik dulu di teks tempat footnote akan ditaruh!");
+            
+            // Validasi apakah kursor ada di dalam boxKitab
+            let node = selection.anchorNode;
+            let isInsideWorkspace = false;
+            while (node) {
+                if (node.id === 'boxKitab') { isInsideWorkspace = true; break; }
+                node = node.parentNode;
+            }
+            if (!isInsideWorkspace) return alert("Klik dulu di dalam area teks Arab/Pegon untuk menaruh footnote!");
+
+            let fnCount = document.querySelectorAll('.fn-item').length + 1;
+            let range = selection.getRangeAt(0);
+            
+            let sup = document.createElement("sup");
+            sup.className = "rujuk-style";
+            sup.style.fontSize = "12px";
+            sup.style.margin = "0 2px";
+            sup.innerText = "[" + fnCount + "]";
+            sup.contentEditable = "false";
+            
+            range.collapse(false);
+            range.insertNode(sup);
+            range.setStartAfter(sup);
+            range.setEndAfter(sup);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Bikin area footnote di bawah kalau belum ada
+            let container = document.getElementById("boxKitab");
+            let fnContainer = document.getElementById("footnoteContainer");
+            if (!fnContainer) {
+                fnContainer = document.createElement("div");
+                fnContainer.id = "footnoteContainer";
+                fnContainer.className = "footnote-container";
+                fnContainer.style.cssText = "margin-top: 30px; border-top: 1px solid #000; padding-top: 10px; text-align: left; direction: ltr; font-family: Arial, sans-serif; font-size: 13px;";
+                container.appendChild(fnContainer);
+            }
+            
+            let fnItem = document.createElement("div");
+            fnItem.className = "fn-item";
+            fnItem.style.marginBottom = "6px";
+            fnItem.innerHTML = `<strong contenteditable="false">${fnCount}.</strong> <span contenteditable="true">Ketik catatan kaki di sini...</span> <button class="hide-for-capture" onclick="this.parentElement.remove()" style="font-size:10px; color:red; border:none; background:none; cursor:pointer;">[Hapus]</button>`;
+            fnContainer.appendChild(fnItem);
+        }
+
+        // ==== FITUR UBAH GAYA MAKNA BAWAH ====
+        function ubahGayaMakna() {
+            let gayaPilihan = document.querySelector('input[name="gayaMakna"]:checked').value;
+            let boxKitab = document.getElementById("boxKitab");
+            
+            boxKitab.classList.remove('gaya-miring', 'gaya-lurus');
+            boxKitab.classList.add('gaya-' + gayaPilihan);
+        }
+
         function setKeyboardMode(mode) {
             let spans = document.querySelectorAll('#boxKitab [contenteditable="true"]');
             let vk = document.getElementById("virtualKeyboard");
@@ -421,11 +533,9 @@
             let rNative = document.querySelector('input[name="kbdMode"][value="native"]');
             
             if(vk.style.display === "none" || vk.style.display === "") {
-                rVirtual.checked = true;
-                setKeyboardMode('virtual');
+                rVirtual.checked = true; setKeyboardMode('virtual');
             } else {
-                rNative.checked = true;
-                setKeyboardMode('native');
+                rNative.checked = true; setKeyboardMode('native');
             }
         }
 
@@ -482,13 +592,10 @@
         function tangkapKetikanEditor(e) {
             let modeBahasa = document.querySelector('input[name="bahasa"]:checked').value;
             if (e.key === 'Tab') {
-                e.preventDefault();
-                buatJarakTab();
-                return;
+                e.preventDefault(); buatJarakTab(); return;
             }
             if (modeBahasa === 'arab' && e.key >= '0' && e.key <= '9') {
-                e.preventDefault();
-                sisipkanKarakter(mapAngkaArab[e.key]);
+                e.preventDefault(); sisipkanKarakter(mapAngkaArab[e.key]);
             }
         }
 
@@ -527,23 +634,27 @@
             let txtArea = document.getElementById("inputTeks");
             let boxKitab = document.getElementById("boxKitab");
             let panelKbd = document.getElementById("panelKbdMode");
+            let panelGaya = document.getElementById("panelGayaMakna");
+            let gayaSekarang = document.querySelector('input[name="gayaMakna"]:checked').value;
             
             if(mode === 'arab') {
                 txtArea.className = "mode-arab-input";
-                boxKitab.className = "workspace-paragraph mode-arab-workspace";
+                boxKitab.className = "workspace-paragraph mode-arab-workspace gaya-" + gayaSekarang;
                 txtArea.placeholder = "Paste teks Arab di sini...";
                 panelKbd.style.display = "block";
+                panelGaya.style.display = "block";
                 document.getElementById("btnToggleVK").style.display = "inline-block";
             } else {
                 txtArea.className = "mode-inggris-input";
                 boxKitab.className = "workspace-paragraph mode-inggris-workspace";
                 txtArea.placeholder = "Example:\nAlhamdu lillahi rabbil 'alamin...";
                 panelKbd.style.display = "none";
+                panelGaya.style.display = "none";
                 document.getElementById("btnToggleVK").style.display = "none";
                 document.getElementById("virtualKeyboard").style.display = "none";
                 document.querySelector('input[name="kbdMode"][value="native"]').checked = true;
             }
-            boxKitab.innerHTML = `<span style="color:#aaa; font-family:sans-serif; font-size:15px;">Hasil plot kata otomatis akan muncul di sini...</span>`;
+            document.getElementById("gandulWrapper").innerHTML = `<span style="color:#aaa; font-family:sans-serif; font-size:15px;">Hasil plot kata otomatis akan muncul di sini...</span>`;
             document.getElementById("btnPDF").style.display = "none";
             document.getElementById("btnGambar").style.display = "none";
         }
@@ -596,7 +707,8 @@
                 htmlHasil += `</div></div>`;
             });
 
-            document.getElementById("boxKitab").innerHTML = htmlHasil;
+            // Perhatian: Hanya overwrite di dalam gandulWrapper, jadi blok Alih Bahasa & Footnote Bosku tidak akan hilang!
+            document.getElementById("gandulWrapper").innerHTML = htmlHasil;
             document.getElementById("btnPDF").style.display = "inline-block";
             document.getElementById("btnGambar").style.display = "inline-block";
             
@@ -638,13 +750,11 @@
             let areaKerja = document.getElementById("boxKitab");
             let btn = document.getElementById("btnGambar");
             let teksAsli = btn.innerHTML;
-            btn.innerHTML = "⌛ Menyimpan...";
-            btn.disabled = true;
+            btn.innerHTML = "⌛ Menyimpan..."; btn.disabled = true;
 
             sembunyikanTitikKosong();
             areaKerja.classList.add("hide-for-capture");
 
-            // Menggunakan dom-to-image yang lebih pintar baca Pegon
             domtoimage.toPng(areaKerja, { bgcolor: '#ffffff' })
                 .then(function (dataUrl) {
                     let linkGambar = document.createElement('a');
@@ -653,14 +763,12 @@
                     linkGambar.click();
                     
                     areaKerja.classList.remove("hide-for-capture");
-                    btn.innerHTML = teksAsli;
-                    btn.disabled = false;
+                    btn.innerHTML = teksAsli; btn.disabled = false;
                 })
                 .catch(function (error) {
                     areaKerja.classList.remove("hide-for-capture");
                     alert("Gagal: " + error);
-                    btn.innerHTML = teksAsli;
-                    btn.disabled = false;
+                    btn.innerHTML = teksAsli; btn.disabled = false;
                 });
         }
     </script>
